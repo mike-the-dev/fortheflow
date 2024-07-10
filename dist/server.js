@@ -8,4 +8,4 @@ const app = (0, express_1.default)();
 app.get('/', function (req, res) {
     res.send('Hello World');
 });
-app.listen(3001);
+app.listen(3000);
