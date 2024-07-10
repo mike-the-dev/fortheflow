@@ -1,0 +1,40 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+      
+    - name: Install depedencies using NPM
+      run: npm install --legacy-peer-deps
+      
+    - name: Build project with NPM if build command is present
+      run: echo "simulating build"
+      # run: npm run build
+      
+    - name: Copy files needed for production to NGINX html directory for serving
+      run: cp -Rfv dist/* node_modules package.json /usr/share/nginx/html/
+      # run: cp -Rfv public .next next.config.js node_modules package.json package-lock.json /usr/share/nginx/html/
+
+    - name: Restart process with PM2.
+      run: echo "simulating pm2 start"
+      # run: pm2 restart TheDivineMedSpaWeb
